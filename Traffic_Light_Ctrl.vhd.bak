@@ -1,0 +1,25 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+
+entity Traffic_Light_Ctrl is port (
+
+			clk					: in std_logic;
+			reset					: in std_logic;
+			register_clr		: in std_logic;
+			blink_sig         : in std_logic;
+			din					: in std_logic;
+			dout					: out std_logic
+  );
+ end Traffic_Light_Ctrl;
+ 
+ architecture circuit of Traffic_Light_Ctrl is
+
+	Signal sreg				: std_logic;
+
+
+BEGIN
+
+IF (	
+
+end;

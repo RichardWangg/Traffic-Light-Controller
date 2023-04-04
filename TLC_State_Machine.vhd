@@ -1,0 +1,293 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+ENTITY TLC_State_Machine IS PORT (
+	clk_input, sm_clken, reset : IN std_logic;
+	NS_button, EW_button       : IN std_logic;
+	
+	NS_g, NS_a, NS_r           : OUT std_logic;
+	EW_g, EW_a, EW_r           : OUT std_logic;
+	NS_cross, EW_cross         : OUT std_logic;
+	NS_reg_clear, EW_reg_clear : OUT std_logic;
+	state_num				   : OUT std_logic_vector(3 downto 0)
+);
+END ENTITY;
+ 
+
+ARCHITECTURE State_Machine of TLC_State_Machine is
+
+TYPE STATES IS (S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15);   -- list all the STATE_NAMES values
+SIGNAL current_state, next_state	:  STATES; -- signals of type STATES
+
+BEGIN
+
+	---- REGISTER LOGIC ----
+	Register_Section: PROCESS (clk_input)  -- this process updates with a clock
+	BEGIN
+		IF(rising_edge(clk_input)) THEN
+			IF (reset = '1') THEN
+				current_state <= S0;
+			ELSIF(sm_clken = '1') THEN
+				current_state <= next_State;
+			END IF;
+		END IF;
+	END PROCESS;	
+
+	---- TRANSITION LOGIC ----
+	Transition_Section: PROCESS (current_state) 
+	BEGIN
+	CASE current_state IS
+			WHEN S0 =>		
+					IF(NS_button='0' and EW_button='1') THEN
+						next_state <= S6;
+					ELSE
+						next_state <= S1;
+					END IF;
+			WHEN S1 =>		
+					IF(NS_button='0' and EW_button='1') THEN
+						next_state <= S6;
+					ELSE
+						next_state <= S2;
+					END IF;
+			WHEN S2 => next_state <= S3;
+			WHEN S3 => next_state <= S4;
+			WHEN S4 => next_state <= S5;
+			WHEN S5 => next_state <= S6;										
+			WHEN S6 => next_state <= S7;	
+			WHEN S7 => next_state <= S8;	
+			WHEN S8 =>		
+				IF(NS_button='1' and EW_button='0') THEN
+					next_state <= S14;
+				ELSE
+					next_state <= S9;
+				END IF;
+			WHEN S9 =>		
+				IF(NS_button='1' and EW_button='0') THEN
+					next_state <= S14;
+				ELSE
+					next_state <= S10;
+				END IF;
+			WHEN S10 => next_state <= S11;
+			WHEN S11 =>	next_state <= S12;
+			WHEN S12 =>	next_state <= S13;
+			WHEN S13 =>	next_state <= S14;
+			WHEN S14 =>	next_state <= S15;
+			WHEN S15 =>	next_state <= S0;
+		END CASE;
+	END PROCESS;
+
+	---- MOORE DECODER SECTION ----
+	Decoder_Section: PROCESS (current_state) 
+	BEGIN
+		CASE current_state IS
+			WHEN S0 =>		
+					NS_g <= '1';
+					NS_a <= '0';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "0000";
+				
+			WHEN S1 =>		
+					NS_g <= '1';
+					NS_a <= '0';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "0001";
+					
+			WHEN S2 =>		
+					NS_g <= '1';
+					NS_a <= '0';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '1';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "0010";
+				
+			WHEN S3 =>		
+					NS_g <= '1';
+					NS_a <= '0';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '1';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "0011";
+					
+			WHEN S4 =>		
+					NS_g <= '1';
+					NS_a <= '0';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '1';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "0100";
+					
+			WHEN S5 =>		
+					NS_g <= '1';
+					NS_a <= '0';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '1';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "0101";
+					
+			WHEN S6 =>		
+					NS_g <= '0';
+					NS_a <= '1';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '1';
+					EW_reg_clear <= '0';
+					state_num <= "0110";
+					
+			WHEN S7 =>		
+					NS_g <= '0';
+					NS_a <= '1';
+					NS_r <= '0';
+					EW_g <= '0';
+					EW_a <= '0';
+					EW_r <= '1';
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "0111";
+					
+			WHEN S8 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '1';
+					EW_a <= '0';
+					EW_r <= '0';	
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "1000";
+					
+				WHEN S9 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '1';
+					EW_a <= '0';
+					EW_r <= '0';
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "1001";
+					
+				WHEN S10 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '1';
+					EW_a <= '0';
+					EW_r <= '0';
+					NS_cross <= '0';
+					EW_cross <= '1';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "1010";
+					
+				WHEN S11 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '1';
+					EW_a <= '0';
+					EW_r <= '0';
+					NS_cross <= '0';
+					EW_cross <= '1';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "1011";
+				
+				WHEN S12 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '1';
+					EW_a <= '0';
+					EW_r <= '0';
+					NS_cross <= '0';
+					EW_cross <= '1';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "1100";
+				
+				WHEN S13 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '1';
+					EW_a <= '0';
+					EW_r <= '0';
+					NS_cross <= '0';
+					EW_cross <= '1';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "1101";
+				
+				WHEN S14 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '0';
+					EW_a <= '1';
+					EW_r <= '0';
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '1';
+					state_num <= "1110";
+					
+				WHEN S15 =>		
+					NS_g <= '0';
+					NS_a <= '0';
+					NS_r <= '1';
+					EW_g <= '0';
+					EW_a <= '1';
+					EW_r <= '0';
+					NS_cross <= '0';
+					EW_cross <= '0';
+					NS_reg_clear <= '0';
+					EW_reg_clear <= '0';
+					state_num <= "1111";
+		END CASE;
+	END PROCESS;
+END ARCHITECTURE State_Machine;

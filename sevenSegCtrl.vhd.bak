@@ -1,0 +1,13 @@
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+
+ENTITY sevenSegCtrl IS PORT
+	(
+		blnk					: in std_logic;
+		ns_state 			: in std_logic_vector(1 DOWNTO 0);
+	);
+END sevenSegCtrl;
+
+ARCHITECTURE Circuit OF sevenSegCtrl IS
